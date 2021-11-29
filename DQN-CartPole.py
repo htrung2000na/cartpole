@@ -16,7 +16,7 @@ batch_size = 10
 ganma = 0.99
 reset_counter = 0
 save_counter = 0
-load_model = False
+load_model = True
 
 env = gym.make("CartPole-v1")
 
@@ -27,7 +27,8 @@ outputs = layers.Dense(2, activation='linear')(hidden_layer_2)
 
 if load_model == True:
     model = keras.models.load_model('my_model')
-    D = np.load('replay_memory.npy')
+    D = np.load('replay_memory.npy', allow_pickle=True)
+    D = deque(D, maxlen=10000)
 else:
     model = keras.Model(inputs= inputs, outputs= outputs)
     model.compile(loss='mse', optimizer=Adam())
@@ -83,4 +84,4 @@ while final_reward < 100:
 
 model.save('my_model')
 
-            
+                
