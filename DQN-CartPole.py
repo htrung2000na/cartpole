@@ -20,8 +20,6 @@ load_model = False
 
 env = gym.make("CartPole-v1")
 
-D = deque(maxlen=10000)
-
 inputs = layers.Input(shape=((4,)))
 hidden_layer_1 = layers.Dense(256, activation='relu')(inputs)
 hidden_layer_2 = layers.Dense(256, activation='relu')(hidden_layer_1)
@@ -29,9 +27,11 @@ outputs = layers.Dense(2, activation='linear')(hidden_layer_2)
 
 if load_model == True:
     model = keras.models.load_model('my_model')
+    D = np.load('replay_memory.npy')
 else:
     model = keras.Model(inputs= inputs, outputs= outputs)
     model.compile(loss='mse', optimizer=Adam())
+    D = deque(maxlen=10000)
 target = keras.models.clone_model(model)
 
 final_reward = 0
@@ -73,6 +73,7 @@ while final_reward < 100:
             save_counter += 1
             if save_counter % 10 == 0:
                 model.save('my_model')
+                np.save('replay_memory.npy', D)
             if epsilon > epsilon_min:
                 epsilon *= epsilon_decay
             print("running reward: {:.2f} at episode {}".format(total_reward, current_episode))
@@ -82,4 +83,4 @@ while final_reward < 100:
 
 model.save('my_model')
 
-                
+            
