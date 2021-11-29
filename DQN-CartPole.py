@@ -7,7 +7,7 @@ from tensorflow.keras import layers
 from collections import deque 
 from tensorflow.keras.optimizers import Adam
 
-max_episode = 100
+max_episode = 500
 epsilon = 1.0
 epsilon_min = 0.1
 epsilon_decay = epsilon_min/epsilon
@@ -15,6 +15,7 @@ epsilon_decay = epsilon_decay**(1. / float(max_episode))
 batch_size = 10
 ganma = 0.99
 reset_counter = 0
+save_counter = 0
 
 env = gym.make("CartPole-v1")
 
@@ -65,6 +66,9 @@ while final_reward < 100:
             if reset_counter % 10 == 0:
                 target = keras.models.clone_model(model)
         if done == True:
+            save_counter += 1
+            if save_counter % 10 == 0:
+                model.save('my_model')
             if epsilon > epsilon_min:
                 epsilon *= epsilon_decay
             print(total_reward)
