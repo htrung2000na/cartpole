@@ -16,6 +16,7 @@ batch_size = 10
 ganma = 0.99
 reset_counter = 0
 save_counter = 0
+load_model = False
 
 env = gym.make("CartPole-v1")
 
@@ -26,9 +27,12 @@ hidden_layer_1 = layers.Dense(256, activation='relu')(inputs)
 hidden_layer_2 = layers.Dense(256, activation='relu')(hidden_layer_1)
 outputs = layers.Dense(2, activation='linear')(hidden_layer_2)
 
-model = keras.Model(inputs= inputs, outputs= outputs)
+if load_model == True:
+    model = keras.models.load_model('my_model')
+else:
+    model = keras.Model(inputs= inputs, outputs= outputs)
+    model.compile(loss='mse', optimizer=Adam())
 target = keras.models.clone_model(model)
-model.compile(loss='mse', optimizer=Adam())
 
 final_reward = 0
 current_episode = 0
@@ -71,7 +75,7 @@ while final_reward < 100:
                 model.save('my_model')
             if epsilon > epsilon_min:
                 epsilon *= epsilon_decay
-            print(total_reward)
+            print("running reward: {:.2f} at episode {}".format(total_reward, current_episode))
             if total_reward > final_reward:
                 final_reward = total_reward
             break
