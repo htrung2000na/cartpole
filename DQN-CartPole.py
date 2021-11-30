@@ -7,13 +7,13 @@ from tensorflow.keras import layers
 from collections import deque 
 from tensorflow.keras.optimizers import Adam
 
-max_episode = 500
+max_episode = 200
 epsilon = 1.0
 epsilon_min = 0.1
 epsilon_decay = epsilon_min/epsilon
 epsilon_decay = epsilon_decay**(1. / float(max_episode))
 batch_size = 10
-ganma = 0.99
+ganma = 0.95
 reset_counter = 0
 save_counter = 0
 load_model = False
@@ -29,15 +29,15 @@ outputs = layers.Dense(2, activation='linear')(hidden_layer_2)
 
 if load_model == True:
     model = keras.models.load_model('my_model')
+    target = keras.models.load_model('my_model')
     #D là replay memory.
     D = np.load('replay_memory.npy', allow_pickle=True)
     D = deque(D, maxlen=10000)
 else:
     model = keras.Model(inputs= inputs, outputs= outputs)
+    target = keras.Model(inputs= inputs, outputs= outputs)
     model.compile(loss='mse', optimizer=Adam())
     D = deque(maxlen=10000)
-#tạo 1 target nerual network
-target = keras.models.clone_model(model)
 
 final_reward = 0
 current_episode = 0
@@ -85,7 +85,7 @@ while final_reward < 100:
             reset_counter += 1
             #cập nhập target nerual network sau mỗi 10 bước thời gian
             if reset_counter % 10 == 0:
-                target = keras.models.clone_model(model)
+                target.set_weights(model.get_weights())
         #khi con lắc mất ổn định
         if done == True:
             save_counter += 1
