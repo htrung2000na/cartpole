@@ -65,7 +65,7 @@ while final_reward < 100:
 
                 state_batch.append(eval[0])
                 q_value_batch.append(y)
-            model.fit(np.array(state_batch), np.array(q_value_batch), epochs=1, verbose=0)
+            model.fit(np.array(state_batch), np.array(q_value_batch), batch_size=batch_size, epochs=1, verbose=0)
             reset_counter += 1
             if reset_counter % 10 == 0:
                 target = keras.models.clone_model(model)
