@@ -16,7 +16,7 @@ batch_size = 10
 ganma = 0.99
 reset_counter = 0
 save_counter = 0
-load_model = True
+load_model = False
 
 env = gym.make("CartPole-v1")
 
@@ -48,7 +48,7 @@ while final_reward < 100:
         if np.random.rand() < epsilon:
             action = env.action_space.sample()
         else:
-            action = np.argmax(model.predict(np.expand_dims(state, 0)))
+            action = np.argmax(model.predict(np.expand_dims(state, 0))[0])
         next_state, reward, done, _ = env.step(action)
         total_reward += reward
         D.append((state, action, reward, next_state, done))
@@ -57,14 +57,14 @@ while final_reward < 100:
             q_value_batch = []
             mini_batch = random.sample(D, k = batch_size)
             for eval in mini_batch:
-                y = np.zeros(2)
+                y = model.predict(np.expand_dims(eval[0], 0))
                 if eval[4] == True:
-                    y[eval[1]] = eval[2]
+                    y[0][eval[1]] = eval[2]
                 else:
-                    y[eval[1]] = eval[2] + ganma*np.amax(target.predict(np.expand_dims(eval[3], 0)))
+                    y[0][eval[1]] = eval[2] + ganma*np.amax(target.predict(np.expand_dims(eval[3], 0))[0])
 
                 state_batch.append(eval[0])
-                q_value_batch.append(y)
+                q_value_batch.append(y[0])
             model.fit(np.array(state_batch), np.array(q_value_batch), batch_size=batch_size, epochs=1, verbose=0)
             reset_counter += 1
             if reset_counter % 10 == 0:
