@@ -23,9 +23,10 @@ env = gym.make("CartPole-v1")
 #tạo nerual network. 4 đầu vào thể hiện trạng thái của môi trường. 2 đầu ra thể hiện giá trị Q của mỗi hành
 #động
 inputs = layers.Input(shape=((4,)))
-hidden_layer_1 = layers.Dense(256, activation='relu')(inputs)
-hidden_layer_2 = layers.Dense(256, activation='relu')(hidden_layer_1)
-outputs = layers.Dense(2, activation='linear')(hidden_layer_2)
+hidden_layer_1 = layers.Dense(512, activation='relu')(inputs)
+hidden_layer_2 = layers.Dense(512, activation='relu')(hidden_layer_1)
+hidden_layer_3 = layers.Dense(512, activation='relu')(hidden_layer_2)
+outputs = layers.Dense(2, activation='linear')(hidden_layer_3)
 
 if load_model == True:
     model = keras.models.load_model('my_model')
