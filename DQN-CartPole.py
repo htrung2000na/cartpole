@@ -61,6 +61,7 @@ while final_reward < 100:
         #nhận được khi chọn hành động, done cho biết con lắc đã mất cân bằng chưa
         next_state, reward, done, _ = env.step(action)
         total_reward += reward
+        state = next_state
         #Đưa dữ liệu vừa quan sát được vào D
         D.append((state, action, reward, next_state, done))
         #lấy dữ liệu từ D dưới dạng mini batch để huấn luyện nerual network
