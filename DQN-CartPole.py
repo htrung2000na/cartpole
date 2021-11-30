@@ -45,9 +45,8 @@ while final_reward < 100:
     total_reward = 0
     for i in range(1000):
         # env.render()
-        choose_action = random.randrange(1, 101)
-        if choose_action < epsilon*100:
-            action = random.randrange(0, 2)
+        if np.random.rand() < epsilon:
+            action = env.action_space.sample()
         else:
             action = np.argmax(model.predict(np.expand_dims(state, 0)))
         next_state, reward, done, _ = env.step(action)
