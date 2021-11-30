@@ -61,7 +61,7 @@ while final_reward < 100:
                 if eval[4] == True:
                     y[eval[1]] = eval[2]
                 else:
-                    y[eval[1]] = eval[2] + ganma*np.argmax(target.predict(np.expand_dims(eval[3], 0)))
+                    y[eval[1]] = eval[2] + ganma*np.amax(target.predict(np.expand_dims(eval[3], 0)))
 
                 state_batch.append(eval[0])
                 q_value_batch.append(y)
