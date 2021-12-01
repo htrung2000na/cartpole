@@ -62,7 +62,7 @@ while True:
         else:
             #nếu không thì chọn hành động với giá trị Q lớn nhất
             action = np.argmax(model.predict(np.expand_dims(state, 0))[0])
-        if action == 2:
+        if action == 1:
             action = 3
         #thực hiện hành động vừa chọn. hàm step trả về trạng thái tiếp theo, phần thường
         #nhận được khi chọn hành động, done cho biết con lắc đã mất cân bằng chưa
@@ -75,7 +75,7 @@ while True:
             done = True
         #Đưa dữ liệu vừa quan sát được vào D
         if action == 3:
-            action = 2
+            action = 1
         D.append((state, action, reward, next_state, done))
         state = next_state
         #lấy dữ liệu từ D dưới dạng mini batch để huấn luyện nerual network
