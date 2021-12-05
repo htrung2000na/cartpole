@@ -13,14 +13,14 @@ env = gym.make('PongDeterministic-v4')
 
 no_of_actions = 3
 max_episodes = 100000
-obs_episodes = 1000
+obs_episodes = 0
 epsilon = 1.0
 epsilon_min = 0.01
 epsilon_decay = epsilon_min/epsilon
 epsilon_decay = epsilon_decay**(1.0 / float(max_episodes))
 batch_size = 32
 gamma = 0.99
-replay_memory = 8000
+replay_memory = 400000
 
 def pre_processing(state):
     state = rgb2gray(state)
@@ -73,7 +73,9 @@ def train_memory_batch(memory, model, target_model):
     model.fit(np.array(history_batch), np.array(q_values_batch), batch_size=batch_size, epochs=1, verbose=0)
 
 def train(epsilon):
-    memory = deque(maxlen=replay_memory)
+    # memory = deque(maxlen=replay_memory)
+    memory = np.load('replay_memory.npy', allow_pickle=True)
+    memory = deque(memory, maxlen=replay_memory)
     model = create_model()
     target_model = create_target_model()
     reset_counter = 0
@@ -86,13 +88,11 @@ def train(epsilon):
         player_score = 0
         opponent_score = 0
         while not done:
-            env.render()
             action = get_action(model, history)
             real_action = action + 1
             if epsilon > epsilon_min:
                 epsilon *= epsilon_decay
             observation, reward, _, _ = env.step(real_action)
-            observation = pre_processing(observation)
             if reward > 0:
                 player_score += 1
             elif reward < 0:
